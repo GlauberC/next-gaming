@@ -11,9 +11,9 @@ import { firebaseRealDatabase } from "../configs/firebase";
 import { storeData } from "../services/firebase";
 
 interface ClientProps {
-  id: string;
-  name: string;
-  createdAt: Date;
+  id?: string;
+  name?: string;
+  createdAt?: Date;
 }
 
 interface CreateClientProps {
