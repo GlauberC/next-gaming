@@ -1,21 +1,35 @@
 import type { NextPage } from "next";
-import { firebaseDatabase } from "../configs/firebase";
-import { ref, set } from "firebase/database";
-import { useEffect } from "react";
+import { useClient } from "../context/client";
 
 const Home: NextPage = () => {
-  function storeData() {
-    console.log("Iniciando salvamento")
-    set(ref(firebaseDatabase, "test"), {
-      ok: true,
-    });
-  }
+  const { client, clients, createClient, disconnect } = useClient();
 
-  useEffect(() => {
-    // storeData();
-  }, []);
-
-  return <h1>OI</h1>;
+  return (
+    <div>
+      {client.id && (
+        <div>
+          <h1>Cliente Ativo</h1>
+          <h3>{client.name}</h3>
+        </div>
+      )}
+      <h1>Outros Clients logados</h1>
+      {clients.map((clientItem) => (
+        <h3 key={clientItem.id}>{clientItem.name}</h3>
+      ))}
+      {client.id ? (
+        <button onClick={() => disconnect()}>Disconnect</button>
+      ) : (
+        <>
+          <button onClick={() => createClient({ name: "João" })}>
+            addJoao
+          </button>
+          <button onClick={() => createClient({ name: "Maria" })}>
+            addMaria
+          </button>
+        </>
+      )}
+    </div>
+  );
 };
 
 export default Home;
