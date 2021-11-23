@@ -11,13 +11,13 @@ export const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1;
+  z-index: 998;
 `;
 export const Window = styled.div`
   background-color: ${colors.background};
   height: 25rem;
   width: 50rem;
-  z-index: 2;
+  z-index: 999;
   border-radius: 20px;
 
   display: flex;
@@ -43,19 +43,4 @@ export const Input = styled.input`
   border-bottom: solid 1px ${colors.textLow};
   width: 50%;
   margin-bottom: 3rem;
-`;
-export const Button = styled.button`
-  cursor: pointer;
-  background-color: ${colors.secondaryMedium};
-
-  font-size: 2rem;
-  width: 50%;
-  height: 4rem;
-  border: none;
-  border-radius: 20px;
-  transition: background-color 0.5s;
-
-  &:hover {
-    background-color: ${colors.secondaryHigh};
-  }
 `;

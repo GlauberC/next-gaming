@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useClient } from "../../context/client";
+import Button from "../../components/buttons/button";
 import * as Styled from "./styles";
 
 export default function LoginModal() {
@@ -25,7 +26,7 @@ export default function LoginModal() {
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        <Styled.Button onClick={handleCreate}>Entrar</Styled.Button>
+        <Button onClick={handleCreate}>Entrar</Button>
       </Styled.Window>
     </Styled.Container>
   );
