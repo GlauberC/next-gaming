@@ -1,6 +1,6 @@
 import type { AppProps } from "next/app";
 import Contexts from "../context";
-import LoginModal from "../layouts/LoginModal";
+import LoginModal from "../layouts/loginModal";
 import Page from "../layouts/page";
 import GlobalStyle from "../styles/global";
 

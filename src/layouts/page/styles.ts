@@ -9,4 +9,5 @@ export const Container = styled.div`
 export const Main = styled.div`
   flex: 1;
   background-color: ${colors.background};
+  padding: 1rem 2rem;
 `;

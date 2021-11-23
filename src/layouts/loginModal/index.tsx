@@ -18,7 +18,7 @@ export default function LoginModal() {
     }
   }
 
-  return client.id ? null : (
+  return client.isConnected ? null : (
     <Styled.Container>
       <Styled.Window>
         <Styled.Label>Digite seu nick para entrar</Styled.Label>

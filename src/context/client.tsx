@@ -9,12 +9,8 @@ import React, {
 import { onValue, ref } from "firebase/database";
 import { firebaseRealDatabase } from "../configs/firebase";
 import { storeData } from "../services/firebase";
+import { ClientProps } from "../models/Client";
 
-interface ClientProps {
-  id?: string;
-  name?: string;
-  createdAt?: Date;
-}
 
 interface CreateClientProps {
   name: string;
@@ -63,6 +59,7 @@ export const ClientProvider: React.FC = ({ children }) => {
       name,
       id: uuidv4(),
       createdAt: new Date(),
+      isConnected: true,
     };
 
     try {
@@ -81,7 +78,7 @@ export const ClientProvider: React.FC = ({ children }) => {
         storeDir: CLIENTS_DIR,
       });
       sessionStorage.removeItem(CLIENT_SESSION);
-      setClient({} as ClientProps);
+      setClient({...client, isConnected: false});
     } catch (err) {
       console.log(err);
     }
