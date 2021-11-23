@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { ClientInGameProps } from "../../models/Client";
+import { ClientInGameProps, ClientProps } from "../../models/Client";
 import * as Styled from "./styles";
 import { MdDone } from "react-icons/md";
 import { colors } from "../../styles/theme";
@@ -8,7 +8,7 @@ interface HubProps {
   title: string;
   maxPlayers?: number;
   joinedClients: ClientInGameProps[];
-  myClient: ClientInGameProps;
+  myClient: ClientProps;
   isReadyMyClient: boolean;
   onQuit(clientId: string): void;
   onJoin(): void;
@@ -27,33 +27,41 @@ export default function Hub({
 }: HubProps) {
   const isAlreadyJoined = useMemo(
     () =>
-      joinedClients.find(
-        (clientItem) => clientItem.data.id === myClient.data.id
+      joinedClients?.find(
+        (clientItem) => clientItem?.data?.id === myClient.id
       ),
     [joinedClients, myClient]
   );
 
   useEffect(() => {
-    if (!myClient?.data?.isConnected && myClient?.data?.id) {
-      onQuit(myClient.data.id);
+    if (!myClient?.isConnected && myClient?.id) {
+      onQuit(myClient.id);
     }
   }, [myClient, onQuit]);
+
+  function handleOnJoin(){
+    if(joinedClients?.length < maxPlayers){
+      onJoin()
+    }else {
+      console.log("Número máximo")
+    }
+  }
 
   return (
     <Styled.Container>
       <Styled.Header>
         <Styled.HeaderText>{title}</Styled.HeaderText>
-        <Styled.HeaderText>{`${joinedClients.length}/${maxPlayers}`}</Styled.HeaderText>
+        <Styled.HeaderText>{`${joinedClients?.length ?? 0}/${maxPlayers}`}</Styled.HeaderText>
       </Styled.Header>
       <Styled.Hub>
         <Styled.HeadedHubContainer>
           <Styled.HeaderHubText>Jogadores</Styled.HeaderHubText>
           <Styled.HeaderHubText>Prontos</Styled.HeaderHubText>
         </Styled.HeadedHubContainer>
-        {joinedClients.map((clientJoined) => (
+        {joinedClients?.map((clientJoined) => (
           <Styled.ClientContainer key={clientJoined.data.id}>
             <Styled.ClientName>{clientJoined.data.name}</Styled.ClientName>
-            {clientJoined.data.id === clientJoined.data.id ? (
+            {clientJoined.data.id === myClient.id ? (
               <Styled.ClientReadybox onClick={onReadyToggle}>
                 {isReadyMyClient && (
                   <MdDone size={18} color={colors.warningMedium} />
@@ -67,12 +75,12 @@ export default function Hub({
           </Styled.ClientContainer>
         ))}
       </Styled.Hub>
-      {isAlreadyJoined && myClient.data.id ? (
-        <Styled.QuitButton onClick={() => onQuit(myClient.data.id!)}>
+      {isAlreadyJoined && myClient.id ? (
+        <Styled.QuitButton onClick={() => onQuit(myClient.id!)}>
           Sair
         </Styled.QuitButton>
       ) : (
-        <Styled.JoinButton onClick={onJoin}>Entrar</Styled.JoinButton>
+        <Styled.JoinButton onClick={handleOnJoin}>Entrar</Styled.JoinButton>
       )}
     </Styled.Container>
   );

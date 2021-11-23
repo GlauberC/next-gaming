@@ -7,8 +7,8 @@ import React, {
   useState,
 } from "react";
 import { onValue, ref } from "firebase/database";
-import { firebaseRealDatabase } from "../configs/firebase";
 import { storeData } from "../services/firebase";
+import { firebaseRealDatabase } from "../configs/firebase";
 import { ClientProps } from "../models/Client";
 
 
