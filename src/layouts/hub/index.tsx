@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { ClientInGameProps, ClientProps } from "../../models/Client";
 import * as Styled from "./styles";
-import { MdDone } from "react-icons/md";
+import { MdDone, MdDelete } from "react-icons/md";
 import { colors } from "../../styles/theme";
 
 interface HubProps {
@@ -10,6 +10,7 @@ interface HubProps {
   joinedClients: ClientInGameProps[];
   myClient: ClientProps;
   isReadyMyClient: boolean;
+  isHost: boolean;
   onQuit(clientId: string): void;
   onJoin(): void;
   onReadyToggle(): void;
@@ -21,15 +22,15 @@ export default function Hub({
   joinedClients,
   maxPlayers = 99,
   isReadyMyClient,
+  isHost,
   onQuit,
   onJoin,
   onReadyToggle,
 }: HubProps) {
+
   const isAlreadyJoined = useMemo(
     () =>
-      joinedClients?.find(
-        (clientItem) => clientItem?.data?.id === myClient.id
-      ),
+      joinedClients?.find((clientItem) => clientItem?.data?.id === myClient.id),
     [joinedClients, myClient]
   );
 
@@ -39,11 +40,11 @@ export default function Hub({
     }
   }, [myClient, onQuit]);
 
-  function handleOnJoin(){
-    if(joinedClients?.length < maxPlayers){
-      onJoin()
-    }else {
-      console.log("Número máximo")
+  function handleOnJoin() {
+    if (joinedClients?.length < maxPlayers) {
+      onJoin();
+    } else {
+      console.log("Número máximo");
     }
   }
 
@@ -51,7 +52,9 @@ export default function Hub({
     <Styled.Container>
       <Styled.Header>
         <Styled.HeaderText>{title}</Styled.HeaderText>
-        <Styled.HeaderText>{`${joinedClients?.length ?? 0}/${maxPlayers}`}</Styled.HeaderText>
+        <Styled.HeaderText>{`${
+          joinedClients?.length ?? 0
+        }/${maxPlayers}`}</Styled.HeaderText>
       </Styled.Header>
       <Styled.Hub>
         <Styled.HeadedHubContainer>
@@ -68,9 +71,27 @@ export default function Hub({
                 )}
               </Styled.ClientReadybox>
             ) : clientJoined.isReady ? (
-              <MdDone size={24} color={colors.warningMedium} />
+              <div>
+
+                {isHost && (
+                  <Styled.KickPlayerButton
+                    onDoubleClick={() => onQuit(clientJoined.data.id!)}
+                  >
+                    <MdDelete size={24} color={colors.errorMedium} />
+                  </Styled.KickPlayerButton>
+                )}
+                <MdDone size={24} color={colors.warningMedium} />
+              </div>
             ) : (
-              <div></div>
+              <div>
+                {isHost && (
+                  <Styled.KickPlayerButton
+                    onDoubleClick={() => onQuit(clientJoined.data.id!)}
+                  >
+                    <MdDelete size={24} color={colors.errorMedium} />
+                  </Styled.KickPlayerButton>
+                )}
+              </div>
             )}
           </Styled.ClientContainer>
         ))}

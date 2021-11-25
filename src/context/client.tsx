@@ -1,16 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
 
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { onValue, ref } from "firebase/database";
 import { storeData } from "../services/firebase";
 import { firebaseRealDatabase } from "../configs/firebase";
 import { ClientProps } from "../models/Client";
-
+import { parseISO, addHours, isFuture } from "date-fns";
 
 interface CreateClientProps {
   name: string;
@@ -37,9 +32,19 @@ export const ClientProvider: React.FC = ({ children }) => {
   useEffect(() => {
     const beforeClient = sessionStorage.getItem(CLIENT_SESSION);
     if (beforeClient) {
-      setClient(JSON.parse(beforeClient));
+      const beforeClientFormatted = JSON.parse(beforeClient);
+      const clientFinded =
+        clients &&
+        clients.find(
+          (clientItem) => clientItem.id === beforeClientFormatted.id
+        );
+      if (clientFinded) {
+        setClient(JSON.parse(beforeClient));
+      } else {
+        setClient({} as ClientProps);
+      }
     }
-  }, []);
+  }, [clients]);
 
   useEffect(() => {
     onValue(clientsRef, (snapshot) => {
@@ -48,7 +53,11 @@ export const ClientProvider: React.FC = ({ children }) => {
   }, []);
 
   async function createClient({ name }: CreateClientProps) {
-    const alreadyClientInDatabase = clients.find(
+    const clientsFormatted = clients ?? [];
+    const currentClients: ClientProps[] = clientsFormatted.filter((client) => {
+      return isFuture(addHours(new Date(client.createdAt!), 5));
+    });
+    const alreadyClientInDatabase = currentClients.find(
       (clientItem) => clientItem.name === name
     );
     if (alreadyClientInDatabase) {
@@ -58,12 +67,15 @@ export const ClientProvider: React.FC = ({ children }) => {
     const newClient: ClientProps = {
       name,
       id: uuidv4(),
-      createdAt: new Date(),
+      createdAt: String(new Date()),
       isConnected: true,
     };
 
     try {
-      await storeData({ data: [...clients, newClient], storeDir: CLIENTS_DIR });
+      await storeData({
+        data: [...currentClients, newClient],
+        storeDir: CLIENTS_DIR,
+      });
       setClient(newClient);
       sessionStorage.setItem(CLIENT_SESSION, JSON.stringify(newClient));
     } catch (err) {
@@ -73,12 +85,15 @@ export const ClientProvider: React.FC = ({ children }) => {
 
   async function disconnect() {
     try {
+      const clientsFormatted = clients ?? [];
       await storeData({
-        data: clients.filter((clientItem) => clientItem.id !== client.id),
+        data: clientsFormatted.filter(
+          (clientItem) => clientItem.id !== client.id
+        ),
         storeDir: CLIENTS_DIR,
       });
       sessionStorage.removeItem(CLIENT_SESSION);
-      setClient({...client, isConnected: false});
+      setClient({ ...client, isConnected: false });
     } catch (err) {
       console.log(err);
     }
@@ -88,8 +103,8 @@ export const ClientProvider: React.FC = ({ children }) => {
     <ClientContext.Provider
       value={{
         client,
-        createClient,
         clients,
+        createClient,
         disconnect,
       }}
     >

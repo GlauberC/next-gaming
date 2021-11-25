@@ -13,7 +13,7 @@ const Home: NextPage = () => {
         </div>
       )}
       <h1>Outros Clients logados</h1>
-      {clients.map((clientItem) => (
+      { clients.length && clients?.map((clientItem) => (
         <h3 key={clientItem.id}>{clientItem.name}</h3>
       ))}
       {client.id ? (

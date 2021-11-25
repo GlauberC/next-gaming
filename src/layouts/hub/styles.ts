@@ -77,3 +77,15 @@ export const ClientReadybox = styled.button`
     border: solid 1px ${colors.secondaryHigh};
   }
 `;
+
+export const KickPlayerButton = styled.button`
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+
+`

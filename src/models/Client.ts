@@ -2,7 +2,7 @@ export interface ClientProps {
   id?: string;
   name?: string;
   isConnected?: boolean;
-  createdAt?: Date;
+  createdAt?: string;
 }
 
 export interface ClientInGameProps {
